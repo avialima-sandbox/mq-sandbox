@@ -1,5 +1,5 @@
-import { Device, isInactiveDevice } from './device.types'
+import { Device } from './device.types'
 
 export function activeDevices(devices: Device[]): Device[] {
-  return devices.filter(device => !isInactiveDevice(device))
+  return devices.filter(device => device.status === 'active')
 }
