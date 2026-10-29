@@ -1,0 +1,19 @@
+name: Cantina CI (reusable)
+
+on:
+  workflow_call:
+
+jobs:
+  cantina-ci:
+    name: Cantina CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run tsc
+      - name: Simulate the rest of the full CI
+        run: sleep 60

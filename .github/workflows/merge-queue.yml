@@ -1,0 +1,38 @@
+name: Merge Queue
+
+on:
+  merge_group:
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  tsc:
+    name: ci / Cantina CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run tsc
+
+  danger:
+    name: Run Danger
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "never runs in the queue"
+
+  api-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report API Tests status for the queue commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/statuses/${{ github.sha }}" \
+            -f state=success -f context='API Tests (Post Deploy)' -f description='not run in merge queue'

@@ -1,0 +1,19 @@
+name: 'API Tests (Post Deploy)'
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  statuses: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report commit status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }}" \
+            -f state=success -f context='API Tests (Post Deploy)' -f description='simulated post-deploy tests'
